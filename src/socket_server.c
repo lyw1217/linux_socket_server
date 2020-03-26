@@ -14,7 +14,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 
-#define MSG_LEN 30
+#define MSG_LEN 256
 
 void vf_error_handling(char * msg);
 
@@ -55,13 +55,15 @@ int main(int argc, char *argv[])
         FD_SET(serv_sockfd, &reads);    // 서버 소켓의 이벤트 검사를 위해 fs_set 테이블에 추가
         fd_max = serv_sockfd;
 
+        FD_SET(0, &reads);
+
         while(1)
         {
                 cpy_reads = reads;
                 timeout.tv_sec = 5;
                 timeout.tv_usec = 500000;       // timeout : 5.5sec
 
-                /* result
+                /* return
                 * -1 : select 함수 오류
                 *  0 : timeout 동안 아무런 사건 발생하지 않음
                 * >0 : 커널로부터 반환받는 사건이 발생한 소켓 기술자 수
@@ -95,14 +97,11 @@ int main(int argc, char *argv[])
                                         }
                                         else
                                         {
+                                                fprintf(stdout, "client %d : %s\n", i, msg);
                                                 write(i, msg, msg_len); // echo
                                         }
                                 }
                         }
-                }
-        }
-
-        close(serv_sockfd);
 
         return 0;
 }

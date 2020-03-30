@@ -91,7 +91,8 @@ int main(int argc, char *argv[])
         left_len = sizeof(response) - 1;
         recv_len = 0;
         timeout = 0;
-
+        
+        fprintf(stdout, "Response :\n");  
         do{
                 memset(response, 0, sizeof(response));
                 bytes = recv(sockfd, response, 1024, 0);
@@ -99,6 +100,7 @@ int main(int argc, char *argv[])
                 token = strtok(response, " ");
                 while(token != NULL)
                 {
+                        fprintf(stdout, "%s ", token);
                         if(!strcmp(token, "101"))
                         {
                                 flag = 1;
@@ -109,7 +111,7 @@ int main(int argc, char *argv[])
 
                 if(flag == 1)
                 {
-                        fputs("HTTP/2 is supported using h2c indicator\n", stdout);
+                        fputs("\nHTTP/2 is supported using h2c indicator\n", stdout);
                         break;
                 }
 
@@ -122,7 +124,7 @@ int main(int argc, char *argv[])
         }while(1);
 
         if(flag != 1)
-                fputs("HTTP/2 is NOT supported using h2c indicator\n", stdout);
+                fputs("\nHTTP/2 is NOT supported using h2c indicator\n", stdout);
 
         if(recv_len == left_len)
                 error("error");
